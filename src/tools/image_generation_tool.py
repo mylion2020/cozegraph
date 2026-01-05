@@ -70,22 +70,31 @@ def generate_and_save_image(title: str, prompt: str) -> str:
 
             return image_url, data
 
-        # 调用图片生成
-        image_url, _ = image_generation_wrapper(ctx, prompt)
-
-        # 保存到数据库
+        # 存储生成的图片信息
+        saved_images = []
         db = get_session()
+        
         try:
             image_mgr = ImageManager()
-            image_mgr.create_image(
-                db,
-                ImageCreate(
-                    title=title,
-                    prompt=prompt,
-                    image_url=image_url
+            # 循环两次，生成并存储两张图片
+            for i in range(2):
+                # 调用图片生成
+                image_url, _ = image_generation_wrapper(ctx, prompt)
+                
+                # 保存到数据库
+                image_mgr.create_image(
+                    db,
+                    ImageCreate(
+                        title=title,
+                        prompt=prompt,
+                        image_url=image_url
+                    )
                 )
-            )
-            return f"✅ 图片生成成功！\n\n📌 标题: {title}\n📝 提示词: {prompt}\n🖼️ 图片URL: {image_url}\n\n图片已保存到数据库，您可以通过标题「{title}」来查询这张图片。"
+                saved_images.append(image_url)
+                
+            image_list_str = "\n".join([f"🖼️ 图片{i+1} URL: {url}" for i, url in enumerate(saved_images)])
+            return f"✅ 两张图片生成成功！\n\n📌 基础标题: {title}\n📝 提示词: {prompt}\n{image_list_str}\n\n图片已保存到数据库，您可以通过标题查询这些图片。"
+            
         finally:
             db.close()
 

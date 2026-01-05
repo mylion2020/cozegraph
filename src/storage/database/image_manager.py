@@ -28,9 +28,9 @@ class ImageManager:
             db.rollback()
             raise
 
-    def get_image_by_title(self, db: Session, title: str) -> Optional[Image]:
-        """根据标题查询图片."""
-        return db.query(Image).filter(Image.title == title).first()
+    def get_images_by_title(self, db: Session, title: str) -> List[Image]:
+        """根据标题查询所有匹配的图片."""
+        return db.query(Image).filter(Image.title == title).all()
 
     def get_images(self, db: Session, skip: int = 0, limit: int = 100) -> List[Image]:
         """获取所有图片列表."""
