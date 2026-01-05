@@ -47,11 +47,12 @@ def build_agent(ctx=None):
     # 导入工具
     from tools.image_generation_tool import generate_and_save_image
     from tools.image_query_tool import query_image_by_title
+    from tools.list_images_tool import list_all_images
 
     return create_agent(
         model=llm,
         system_prompt=cfg.get("sp"),
-        tools=[generate_and_save_image, query_image_by_title],
+        tools=[generate_and_save_image, query_image_by_title, list_all_images],
         checkpointer=get_memory_saver(),
         state_schema=AgentState,
     )
